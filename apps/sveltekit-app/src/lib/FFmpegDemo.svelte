@@ -2,7 +2,6 @@
 	import { FFmpeg } from '@ffmpeg/ffmpeg';
 	// @ts-ignore
 	import type { LogEvent } from '@ffmpeg/ffmpeg/dist/esm/types';
-	import { fetchFile, toBlobURL } from '@ffmpeg/util';
 
 	let videoEl: HTMLVideoElement;
 
@@ -33,6 +32,19 @@
 			new Blob([(data as Uint8Array).buffer], { type: 'video/mp4' })
 		);
 	}
+    async function toBlobURL(url, mimeType) {
+        try {
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`HTTP error ${response.status}`);
+            }
+            const blob = await response.arrayBuffer();
+            return URL.createObjectURL(new Blob([blob], { type: mimeType }));
+        } catch (err) {
+            console.error(`Error loading ${url}: ${err.message}`);
+            throw err;
+        }
+    }
 </script>
 
 <div>
