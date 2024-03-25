@@ -23,7 +23,11 @@
 			workerURL: await toBlobURL(`${baseURL}/ffmpeg-core.worker.js`, 'text/javascript')
 		});
 		message = 'Start transcoding';
-		await ffmpeg.writeFile('test.avi', await fetchFile(videoURL));
+		// lets try a different source
+		let source = await toBlobURL(videoURL,'video/msvideo')
+		// let source = await toBlobURL('/inmovie.mkv','video/matroska')
+		await ffmpeg.writeFile('test.avi', source);
+
 		await ffmpeg.exec(['-i', 'test.avi', 'test.mp4']);
 		message = 'Complete transcoding';
 		const data = await ffmpeg.readFile('test.mp4');
@@ -51,6 +55,6 @@
 	<!-- svelte-ignore a11y-media-has-caption -->
 	<video bind:this={videoEl} controls />
 	<br />
-	<button on:click={transcode}>Start</button>
+	<button on:click={() => transcode() }>Start</button>
 	<p>{message}</p>
 </div>
