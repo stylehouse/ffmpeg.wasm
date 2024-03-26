@@ -12,7 +12,7 @@ import { fetchFile, toBlobURL } from '@ffmpeg/util'
 import { defineComponent, ref } from 'vue'
 
 const baseURL = 'https://unpkg.com/@ffmpeg/core-mt@0.12.6/dist/esm'
-const videoURL = 'https://raw.githubusercontent.com/ffmpegwasm/testdata/master/video-15s.avi'
+const videoURL = '/movie.mp4'
 
 export default defineComponent({
   name: 'App',
@@ -33,10 +33,10 @@ export default defineComponent({
       })
       message.value = 'Start transcoding'
       await ffmpeg.writeFile('test.avi', await fetchFile(videoURL))
-      await ffmpeg.exec(['-i', 'test.avi', 'test.mp4'])
+      await ffmpeg.exec(['-i', 'test.avi', 'test.opus'])
       message.value = 'Complete transcoding'
-      const data = await ffmpeg.readFile('test.mp4')
-      video.value = URL.createObjectURL(new Blob([(data as Uint8Array).buffer], { type: 'video/mp4' }))
+      const data = await ffmpeg.readFile('test.opus')
+      video.value = URL.createObjectURL(new Blob([(data as Uint8Array).buffer], { type: 'video/opus' }))
     }
     return {
       video,
