@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { FFmpeg } from '@ffmpeg/ffmpeg';
 	// @ts-ignore
+	// import {fetchFile} from '@ffmpeg/util';
+	import {fetchFile} from '$lib/not-ffmpeg-util';
 	import type { LogEvent } from '@ffmpeg/ffmpeg/dist/esm/types';
 
 	let videoEl: HTMLVideoElement;
@@ -8,7 +10,7 @@
 	const baseURL = 'https://unpkg.com/@ffmpeg/core-mt@0.12.6/dist/esm';
 	const videoURL = 'https://raw.githubusercontent.com/ffmpegwasm/testdata/master/video-15s.avi';
 
-	let message = 'Click Start to Transcode';
+	let message = 'Clicks Start';
 
 	async function transcode() {
 		// warn about problems that may occur...
@@ -30,19 +32,20 @@
 			workerURL: await toBlobURL(`${baseURL}/ffmpeg-core.worker.js`, 'text/javascript')
 		});
 		message = 'Start transcoding';
-		// lets try a different source
-		let source = await toBlobURL(videoURL,'video/msvideo')
-		// let source = await toBlobURL('/inmovie.mkv','video/matroska')
-		await ffmpeg.writeFile('test.avi', source);
-
+		await ffmpeg.writeFile('test.avi', await fetchFile(videoURL));
+		
 		await ffmpeg.exec(['-i', 'test.avi', 'test.mp4']);
+
 		message = 'Complete transcoding';
+
+
 		const data = await ffmpeg.readFile('test.mp4');
-		console.log('done');
 		videoEl.src = URL.createObjectURL(
 			new Blob([(data as Uint8Array).buffer], { type: 'video/mp4' })
 		);
+
 	}
+	
     async function toBlobURL(url, mimeType) {
         try {
             const response = await fetch(url);
