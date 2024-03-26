@@ -11,6 +11,13 @@
 	let message = 'Click Start to Transcode';
 
 	async function transcode() {
+		// warn about problems that may occur...
+		if (!crossOriginIsolated) {
+			console.warn("crossOriginIsolated is false: configure Cross-Origin-(Opener|Embedder)-Policy")
+		}
+		if (typeof SharedArrayBuffer == 'undefined') {
+			console.warn("SharedArrayBuffer is false: is crossOriginIsolated false?")
+		}
 		const ffmpeg = new FFmpeg();
 		message = 'Loading ffmpeg-core.js';
 		ffmpeg.on('log', ({ message: msg }: LogEvent) => {
